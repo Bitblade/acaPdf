@@ -62,17 +62,17 @@ class SecondaryToolbar {
     this.buttons = [
       { element: options.presentationModeButton, eventName: 'presentationmode',
         close: true, },
-      { element: options.openFileButton, eventName: 'openfile', close: true, },
-      { element: options.printButton, eventName: 'print', close: true, },
-      { element: options.downloadButton, eventName: 'download', close: true, },
-      { element: options.viewBookmarkButton, eventName: null, close: true, },
+      // { element: options.openFileButton, eventName: 'openfile', close: true, },
+      // { element: options.printButton, eventName: 'print', close: true, },
+      // { element: options.downloadButton, eventName: 'download', close: true, },
+      // { element: options.viewBookmarkButton, eventName: null, close: true, },
       { element: options.firstPageButton, eventName: 'firstpage',
         close: true, },
       { element: options.lastPageButton, eventName: 'lastpage', close: true, },
-      { element: options.pageRotateCwButton, eventName: 'rotatecw',
-        close: false, },
-      { element: options.pageRotateCcwButton, eventName: 'rotateccw',
-        close: false, },
+      // { element: options.pageRotateCwButton, eventName: 'rotatecw',
+      //   close: false, },
+      // { element: options.pageRotateCcwButton, eventName: 'rotateccw',
+      //   close: false, },
       { element: options.cursorSelectToolButton, eventName: 'switchcursortool',
         eventDetails: { tool: CursorTool.SELECT, }, close: true, },
       { element: options.cursorHandToolButton, eventName: 'switchcursortool',
@@ -89,8 +89,8 @@ class SecondaryToolbar {
         eventDetails: { mode: SpreadMode.ODD, }, close: true, },
       { element: options.spreadEvenButton, eventName: 'switchspreadmode',
         eventDetails: { mode: SpreadMode.EVEN, }, close: true, },
-      { element: options.documentPropertiesButton,
-        eventName: 'documentproperties', close: true, },
+      // { element: options.documentPropertiesButton,
+      //   eventName: 'documentproperties', close: true, },
     ];
     this.items = {
       firstPage: options.firstPageButton,
@@ -160,8 +160,8 @@ class SecondaryToolbar {
   _updateUIState() {
     this.items.firstPage.disabled = (this.pageNumber <= 1);
     this.items.lastPage.disabled = (this.pageNumber >= this.pagesCount);
-    this.items.pageRotateCw.disabled = this.pagesCount === 0;
-    this.items.pageRotateCcw.disabled = this.pagesCount === 0;
+    // this.items.pageRotateCw.disabled = this.pagesCount === 0;
+    // this.items.pageRotateCcw.disabled = this.pagesCount === 0;
   }
 
   _bindClickListeners() {

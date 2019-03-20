@@ -448,7 +448,7 @@ let PDFViewerApplication = {
   },
 
   get supportsPrinting() {
-    return PDFPrintServiceFactory.instance.supportsPrinting;
+    return false;
   },
 
   get supportsFullscreen() {
@@ -1244,48 +1244,55 @@ let PDFViewerApplication = {
   },
 
   beforePrint() {
-    if (this.printService) {
-      // There is no way to suppress beforePrint/afterPrint events,
-      // but PDFPrintService may generate double events -- this will ignore
-      // the second event that will be coming from native window.print().
-      return;
-    }
-
-    if (!this.supportsPrinting) {
-      this.l10n.get('printing_not_supported', null,
-                    'Warning: Printing is not fully supported by ' +
-                    'this browser.').then((printMessage) => {
-        this.error(printMessage);
+      this.l10n.get('printing_disabled', null,
+        'Due to license limitations, this content cannot be printed')
+        .then((printMessage) => {
+          this.error(printMessage);
+          window.alert(printMessage);
       });
       return;
-    }
 
-    // The beforePrint is a sync method and we need to know layout before
-    // returning from this method. Ensure that we can get sizes of the pages.
-    if (!this.pdfViewer.pageViewsReady) {
-      this.l10n.get('printing_not_ready', null,
-                    'Warning: The PDF is not fully loaded for printing.').
-          then((notReadyMessage) => {
-        window.alert(notReadyMessage);
-      });
-      return;
-    }
-
-    let pagesOverview = this.pdfViewer.getPagesOverview();
-    let printContainer = this.appConfig.printContainer;
-    let printService = PDFPrintServiceFactory.instance.createPrintService(
-      this.pdfDocument, pagesOverview, printContainer, this.l10n);
-    this.printService = printService;
-    this.forceRendering();
-
-    printService.layout();
-
-    if (typeof PDFJSDev !== 'undefined' &&
-        PDFJSDev.test('FIREFOX || MOZCENTRAL')) {
-      this.externalServices.reportTelemetry({
-        type: 'print',
-      });
-    }
+    // if (this.printService) {
+    //   // There is no way to suppress beforePrint/afterPrint events,
+    //   // but PDFPrintService may generate double events -- this will ignore
+    //   // the second event that will be coming from native window.print().
+    //   return;
+    // }
+    //
+    // if (!this.supportsPrinting) {
+    //   this.l10n.get('printing_disabled', null,
+    //                 'Due to license limitations, this content cannot be printed').then((printMessage) => {
+    //     this.error(printMessage);
+    //   });
+    //   return;
+    // }
+    //
+    // // The beforePrint is a sync method and we need to know layout before
+    // // returning from this method. Ensure that we can get sizes of the pages.
+    // if (!this.pdfViewer.pageViewsReady) {
+    //   this.l10n.get('printing_not_ready', null,
+    //                 'Warning: The PDF is not fully loaded for printing.').
+    //       then((notReadyMessage) => {
+    //     window.alert(notReadyMessage);
+    //   });
+    //   return;
+    // }
+    //
+    // let pagesOverview = this.pdfViewer.getPagesOverview();
+    // let printContainer = this.appConfig.printContainer;
+    // let printService = PDFPrintServiceFactory.instance.createPrintService(
+    //   this.pdfDocument, pagesOverview, printContainer, this.l10n);
+    // this.printService = printService;
+    // this.forceRendering();
+    //
+    // printService.layout();
+    //
+    // if (typeof PDFJSDev !== 'undefined' &&
+    //     PDFJSDev.test('FIREFOX || MOZCENTRAL')) {
+    //   this.externalServices.reportTelemetry({
+    //     type: 'print',
+    //   });
+    // }
   },
 
   afterPrint: function pdfViewSetupAfterPrint() {
@@ -1388,6 +1395,18 @@ let PDFViewerApplication = {
     window.addEventListener('hashchange', _boundEvents.windowHashChange);
     window.addEventListener('beforeprint', _boundEvents.windowBeforePrint);
     window.addEventListener('afterprint', _boundEvents.windowAfterPrint);
+
+    const mainContainer = document.querySelector('#mainContainer');
+    mainContainer.addEventListener('copy', (event) => {
+      event.clipboardData.setData('text/plain',
+        'Due to license limitations, this content cannot be copied');
+      event.preventDefault();
+    });
+
+    mainContainer.addEventListener('dragstart', (event) => {
+      event.dataTransfer.setData('text/plain',
+        'Due to license limitations, this content cannot be copied');
+    });
   },
 
   unbindEvents() {
@@ -1535,10 +1554,15 @@ function webViewerInitialized() {
   let appConfig = PDFViewerApplication.appConfig;
   let file;
   if (typeof PDFJSDev === 'undefined' || PDFJSDev.test('GENERIC')) {
-    let queryString = document.location.search.substring(1);
-    let params = parseQueryString(queryString);
-    file = 'file' in params ? params.file : AppOptions.get('defaultUrl');
-    validateFileURL(file);
+    // let queryString = document.location.search.substring(1);
+    // let params = parseQueryString(queryString);
+    if (typeof ACABOO_PDF_URL === 'undefined'){
+      file = AppOptions.get('defaultUrl')
+    }else{
+      file = ACABOO_PDF_URL
+    }
+    // file = 'file' in params ? params.file : AppOptions.get('defaultUrl');
+    // validateFileURL(file);
   } else if (PDFJSDev.test('FIREFOX || MOZCENTRAL')) {
     file = window.location.href.split('#')[0];
   } else if (PDFJSDev.test('CHROME')) {
@@ -1591,8 +1615,8 @@ function webViewerInitialized() {
       });
     });
   } else {
-    appConfig.toolbar.openFile.setAttribute('hidden', 'true');
-    appConfig.secondaryToolbar.openFileButton.setAttribute('hidden', 'true');
+    // appConfig.toolbar.openFile.setAttribute('hidden', 'true');
+    // appConfig.secondaryToolbar.openFileButton.setAttribute('hidden', 'true');
   }
 
   if (typeof PDFJSDev !== 'undefined' &&
@@ -1607,8 +1631,8 @@ function webViewerInitialized() {
   }
 
   if (!PDFViewerApplication.supportsPrinting) {
-    appConfig.toolbar.print.classList.add('hidden');
-    appConfig.secondaryToolbar.printButton.classList.add('hidden');
+    // appConfig.toolbar.print.classList.add('hidden');
+    // appConfig.secondaryToolbar.printButton.classList.add('hidden');
   }
 
   if (!PDFViewerApplication.supportsFullscreen) {
@@ -1643,17 +1667,30 @@ function webViewerInitialized() {
 let webViewerOpenFileViaURL;
 if (typeof PDFJSDev === 'undefined' || PDFJSDev.test('GENERIC')) {
   webViewerOpenFileViaURL = function webViewerOpenFileViaURL(file) {
-    if (file && file.lastIndexOf('file:', 0) === 0) {
+    if (true || file && file.lastIndexOf('file:', 0) === 0) {
       // file:-scheme. Load the contents in the main thread because QtWebKit
       // cannot load file:-URLs in a Web Worker. file:-URLs are usually loaded
       // very quickly, so there is no need to set up progress event listeners.
       PDFViewerApplication.setTitleUsingUrl(file);
       const xhr = new XMLHttpRequest();
       xhr.onload = function() {
-        PDFViewerApplication.open(new Uint8Array(xhr.response));
+        var raw = atob(xhr.responseText);
+        var uint8Array = new Uint8Array(raw.length);
+        for (var i = 0; i < raw.length; i++) {
+          uint8Array[i] = raw.charCodeAt(i);
+        }
+
+        PDFViewerApplication.open(uint8Array);
       };
-      xhr.open('GET', file);
-      xhr.responseType = 'arraybuffer';
+
+      if(typeof ACABOO_CSRF !== 'undefined'){
+        xhr.open('POST', file);
+        xhr.setRequestHeader('X-CSRFToken', ACABOO_CSRF)
+      }else{
+        xhr.open('GET', file);
+      }
+
+      xhr.responseType = 'text';
       xhr.send();
       return;
     }
@@ -1813,8 +1850,6 @@ function webViewerUpdateViewarea(evt) {
   }
   let href =
     PDFViewerApplication.pdfLinkService.getAnchorUrl(location.pdfOpenParams);
-  PDFViewerApplication.appConfig.toolbar.viewBookmark.href = href;
-  PDFViewerApplication.appConfig.secondaryToolbar.viewBookmarkButton.href =
     href;
 
   // Show/hide the loading indicator in the page number input element.

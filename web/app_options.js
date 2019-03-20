@@ -35,7 +35,7 @@ const defaultOptions = {
   },
   defaultUrl: {
     /** @type {string} */
-    value: 'compressed.tracemonkey-pldi-09.pdf',
+    value: 'about:blank',
     kind: OptionKind.VIEWER,
   },
   defaultZoomValue: {
@@ -153,8 +153,7 @@ const defaultOptions = {
   },
   cMapUrl: {
     /** @type {string} */
-    value: (typeof PDFJSDev === 'undefined' || !PDFJSDev.test('PRODUCTION') ?
-            '../external/bcmaps/' : '../web/cmaps/'),
+    value: '/static/pdf.js/build/dist/cmaps/',
     kind: OptionKind.API,
   },
   disableAutoFetch: {
@@ -216,8 +215,7 @@ const defaultOptions = {
   },
   workerSrc: {
     /** @type {string} */
-    value: (typeof PDFJSDev === 'undefined' || !PDFJSDev.test('PRODUCTION') ?
-            '../src/worker_loader.js' : '../build/pdf.worker.js'),
+    value: '/static/pdf.js/build/minified/build/pdf.worker.js',
     kind: OptionKind.WORKER,
   },
 };

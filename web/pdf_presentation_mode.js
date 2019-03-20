@@ -66,14 +66,6 @@ class PDFPresentationMode {
         this.contextMenuOpen = false;
         this.eventBus.dispatch('lastpage', { source: this, });
       });
-      contextMenuItems.contextPageRotateCw.addEventListener('click', () => {
-        this.contextMenuOpen = false;
-        this.eventBus.dispatch('rotatecw', { source: this, });
-      });
-      contextMenuItems.contextPageRotateCcw.addEventListener('click', () => {
-        this.contextMenuOpen = false;
-        this.eventBus.dispatch('rotateccw', { source: this, });
-      });
     }
   }
 
