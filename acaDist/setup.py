@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-with open(os.path.join(os.path.dirname(__file__), 'readme.rst')) as readme:
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
     README = readme.read()
 
 base_path = Path('.')
@@ -14,7 +14,7 @@ acapdf_path = base_path / 'acaPdf'
 static_acapdf_path = acapdf_path / 'static' / 'acaPdf'
 minified_path = base_path / '..' / 'build' / 'minified'
 
-shutil.rmtree(str(static_acapdf_path), ignore_errors=True)
+shutil.rmtree(str(acapdf_path), ignore_errors=True)
 os.makedirs(static_acapdf_path)
 shutil.copytree(str(minified_path / 'web' / 'cmaps'), str(static_acapdf_path / 'cmaps'))
 shutil.copytree(str(minified_path / 'web' / 'images'), str(static_acapdf_path / 'images'))
@@ -24,7 +24,7 @@ shutil.copy(str(minified_path / 'web' / 'viewer.css'), str(static_acapdf_path))
 shutil.copy(str(minified_path / 'build' / 'pdf.js'), str(static_acapdf_path))
 shutil.copy(str(minified_path / 'build' / 'pdf.worker.js'), str(static_acapdf_path))
 
-open(acapdf_path / '__init__.py', 'x').close()
+open(acapdf_path / '__init__.py', 'a').close()
 
 # static_data_files = []
 # for path in Path('acaPdf/static/').glob('**/*'):
