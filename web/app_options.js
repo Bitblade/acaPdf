@@ -153,7 +153,7 @@ const defaultOptions = {
   },
   cMapUrl: {
     /** @type {string} */
-    value: '/static/pdf.js/build/dist/cmaps/',
+    value: '/static/acaPdf/cmaps/',
     kind: OptionKind.API,
   },
   disableAutoFetch: {
@@ -215,7 +215,7 @@ const defaultOptions = {
   },
   workerSrc: {
     /** @type {string} */
-    value: '/static/pdf.js/build/minified/build/pdf.worker.js',
+    value: '/static/acaPdf/pdf.worker.js',
     kind: OptionKind.WORKER,
   },
 };
