@@ -1,29 +1,31 @@
-import os
-import shutil
-import distutils.command.sdist
 from pathlib import Path
-from setuptools import setup, find_packages
+from setuptools import setup, Command
+from os import path, makedirs
+import shutil
 
-# allow setup.py to be run from any path
-os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+here = path.abspath(path.dirname(__file__))
 
-with open(os.path.join(os.path.dirname(__file__), 'README')) as readme:
-    README = readme.read()
+class PrepCommand(Command):
+    description = 'Prepare acaPdf directory'
 
+    user_options=[]
 
-class BuildCommand(distutils.command.sdist.sdist):
+    def initialize_options(self):
+        """Abstract method that is required to be overwritten"""
+
+    def finalize_options(self):
+        """Abstract method that is required to be overwritten"""
 
     def run(self):
-        base_path = Path('.')
-        acapdf_path = base_path / 'acaPdf'
+        acapdf_path = Path(here) / 'acaPdf'
         static_acapdf_path = acapdf_path / 'static' / 'acaPdf'
-        minified_path = base_path / '..' / 'build' / 'minified'
+        minified_path = Path(here) / '..' / 'build' / 'minified'
 
         shutil.rmtree(str(acapdf_path), ignore_errors=True)
-        os.makedirs(static_acapdf_path)
+        makedirs(static_acapdf_path)
         shutil.copytree(str(minified_path / 'web' / 'cmaps'), str(static_acapdf_path / 'cmaps'))
         shutil.copytree(str(minified_path / 'web' / 'images'), str(static_acapdf_path / 'images'))
-        shutil.copytree(str(minified_path / 'web' / 'locale'), str(static_acapdf_path / 'locate'))
+        shutil.copytree(str(minified_path / 'web' / 'locale'), str(static_acapdf_path / 'locale'))
         shutil.copy(str(minified_path / 'web' / 'pdf.viewer.js'), str(static_acapdf_path))
         shutil.copy(str(minified_path / 'web' / 'viewer.css'), str(static_acapdf_path))
         shutil.copy(str(minified_path / 'build' / 'pdf.js'), str(static_acapdf_path))
@@ -31,22 +33,15 @@ class BuildCommand(distutils.command.sdist.sdist):
 
         open(acapdf_path / '__init__.py', 'a').close()
 
-        # Run the original build command
-        distutils.command.sdist.sdist.run(self)
 
 setup(
     name='django-acapdf',
-    # use_scm_version={"root": "..", "relative_to": __file__},
-    version=0.2,
-    packages=find_packages(),
-    include_package_data=True,
-    license='License :: Other/Proprietary License',
+    version='0.3.0',  # Required
     description='AcaBoo PDF reader based on pdf.js',
-    long_description=README,
-    url='https://www.acaboo.com/',
-    author='Mark Laagland',
+    url='https://www.acaboo.com',
+    author='Mark Laagland / Acaboo B.V.',
     author_email='mark@acaboo.com',
-    classifiers=[
+    classifiers=[  # Optional
         'Environment :: Web Environment',
         'Framework :: Django',
         'Framework :: Django :: 2.1',  # replace "X.Y" as appropriate
@@ -54,11 +49,24 @@ setup(
         'License :: Other/Proprietary License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Development Status :: 3 - Alpha'
     ],
-    cmdclass={"sdist": BuildCommand},
-    # setup_requires=['setuptools_scm'],
+    packages=['acaPdf'],
+    python_requires='>=3.5',
+    package_data={
+        'acaPdf': [
+            'static/acaPdf/*',
+            'static/acaPdf/cmaps/*',
+            'static/acaPdf/images/*',
+            'static/acaPdf/locale/*'
+            'static/acaPdf/locale/*/*'
+        ],
+    },
+    cmdclass={"prep": PrepCommand},
 )
