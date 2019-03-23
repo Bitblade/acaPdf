@@ -1,38 +1,38 @@
 import os
-from pathlib import Path
 import shutil
-
+import distutils.command.sdist
+from pathlib import Path
 from setuptools import setup, find_packages
+
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
+with open(os.path.join(os.path.dirname(__file__), 'README')) as readme:
     README = readme.read()
 
-base_path = Path('.')
-acapdf_path = base_path / 'acaPdf'
-static_acapdf_path = acapdf_path / 'static' / 'acaPdf'
-minified_path = base_path / '..' / 'build' / 'minified'
 
-shutil.rmtree(str(acapdf_path), ignore_errors=True)
-os.makedirs(static_acapdf_path)
-shutil.copytree(str(minified_path / 'web' / 'cmaps'), str(static_acapdf_path / 'cmaps'))
-shutil.copytree(str(minified_path / 'web' / 'images'), str(static_acapdf_path / 'images'))
-shutil.copytree(str(minified_path / 'web' / 'locale'), str(static_acapdf_path / 'locate'))
-shutil.copy(str(minified_path / 'web' / 'pdf.viewer.js'), str(static_acapdf_path))
-shutil.copy(str(minified_path / 'web' / 'viewer.css'), str(static_acapdf_path))
-shutil.copy(str(minified_path / 'build' / 'pdf.js'), str(static_acapdf_path))
-shutil.copy(str(minified_path / 'build' / 'pdf.worker.js'), str(static_acapdf_path))
+class BuildCommand(distutils.command.sdist.sdist):
 
-open(acapdf_path / '__init__.py', 'a').close()
+    def run(self):
+        base_path = Path('.')
+        acapdf_path = base_path / 'acaPdf'
+        static_acapdf_path = acapdf_path / 'static' / 'acaPdf'
+        minified_path = base_path / '..' / 'build' / 'minified'
 
-# static_data_files = []
-# for path in Path('acaPdf/static/').glob('**/*'):
-#     if path.is_file():
-#         static_data_files.append(str(path))
-#         print(str(path))
-#
-# data_files = [('acaPdf/static', static_data_files)]
+        shutil.rmtree(str(acapdf_path), ignore_errors=True)
+        os.makedirs(static_acapdf_path)
+        shutil.copytree(str(minified_path / 'web' / 'cmaps'), str(static_acapdf_path / 'cmaps'))
+        shutil.copytree(str(minified_path / 'web' / 'images'), str(static_acapdf_path / 'images'))
+        shutil.copytree(str(minified_path / 'web' / 'locale'), str(static_acapdf_path / 'locate'))
+        shutil.copy(str(minified_path / 'web' / 'pdf.viewer.js'), str(static_acapdf_path))
+        shutil.copy(str(minified_path / 'web' / 'viewer.css'), str(static_acapdf_path))
+        shutil.copy(str(minified_path / 'build' / 'pdf.js'), str(static_acapdf_path))
+        shutil.copy(str(minified_path / 'build' / 'pdf.worker.js'), str(static_acapdf_path))
+
+        open(acapdf_path / '__init__.py', 'a').close()
+
+        # Run the original build command
+        distutils.command.sdist.sdist.run(self)
 
 setup(
     name='django-acapdf',
@@ -58,4 +58,5 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Development Status :: 3 - Alpha'
     ],
+    cmdclass={"sdist": BuildCommand},
 )
