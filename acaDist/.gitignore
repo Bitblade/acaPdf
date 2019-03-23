@@ -2,3 +2,4 @@
 /dist/
 /django_acapdf.egg-info/
 MANIFEST
+/.eggs/
