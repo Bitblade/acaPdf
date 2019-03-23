@@ -36,12 +36,11 @@ class PrepCommand(Command):
 
 setup(
     name='django-acapdf',
-    version='0.3.0',  # Required
     description='AcaBoo PDF reader based on pdf.js',
     url='https://www.acaboo.com',
     author='Mark Laagland / Acaboo B.V.',
     author_email='mark@acaboo.com',
-    classifiers=[  # Optional
+    classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
         'Framework :: Django :: 2.1',  # replace "X.Y" as appropriate
