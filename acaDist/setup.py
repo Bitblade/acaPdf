@@ -36,7 +36,8 @@ class BuildCommand(distutils.command.sdist.sdist):
 
 setup(
     name='django-acapdf',
-    use_scm_version={"root": "..", "relative_to": __file__},
+    # use_scm_version={"root": "..", "relative_to": __file__},
+    version=0.2,
     packages=find_packages(),
     include_package_data=True,
     license='License :: Other/Proprietary License',
@@ -59,5 +60,5 @@ setup(
         'Development Status :: 3 - Alpha'
     ],
     cmdclass={"sdist": BuildCommand},
-    setup_requires=['setuptools_scm'],
+    # setup_requires=['setuptools_scm'],
 )
