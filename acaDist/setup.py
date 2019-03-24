@@ -11,10 +11,10 @@ class PrepCommand(Command):
     user_options=[]
 
     def initialize_options(self):
-        """Abstract method that is required to be overwritten"""
+        pass
 
     def finalize_options(self):
-        """Abstract method that is required to be overwritten"""
+        pass
 
     def run(self):
         acapdf_path = Path(here) / 'acaPdf'
@@ -63,8 +63,8 @@ setup(
             'static/acaPdf/*',
             'static/acaPdf/cmaps/*',
             'static/acaPdf/images/*',
-            'static/acaPdf/locale/*'
-            'static/acaPdf/locale/*/*'
+            'static/acaPdf/locale/*',
+            'static/acaPdf/locale/*/*',
         ],
     },
     cmdclass={"prep": PrepCommand},
